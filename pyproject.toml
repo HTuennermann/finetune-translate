@@ -1,0 +1,19 @@
+[project]
+name = "core"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "accelerate>=1.14.0",
+    "datasets>=5.0.0",
+    "evaluate>=0.4.6",
+    "huggingface-hub>=1.24.0",
+    "ipython>=9.15.0",
+    "marimo[sql]>=0.23.14",
+    "openai>=2.47.0",
+    "pandas>=3.0.5",
+    "sacrebleu>=2.6.0",
+    "torch>=2.13.0",
+    "transformers[torch]>=5.14.1",
+]
