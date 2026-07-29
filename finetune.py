@@ -11,7 +11,7 @@ def _():
 
     books = load_dataset("parquet", data_files="training_set.parquet")
     books = books["train"].train_test_split(test_size=0.2)
-
+    books
     return (books,)
 
 
@@ -27,7 +27,6 @@ def _():
 
     checkpoint = "cyberagent/CAT-Translate-0.8b"
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-
     return checkpoint, tokenizer
 
 
@@ -63,7 +62,6 @@ def _(books, preprocess_function):
         remove_columns=books["train"].column_names,
     )
     tokenized_books
-
     return (tokenized_books,)
 
 
@@ -98,7 +96,6 @@ def _(checkpoint):
     from transformers import AutoModelForCausalLM, Trainer, TrainingArguments
 
     model = AutoModelForCausalLM.from_pretrained(checkpoint, dtype="bfloat16")
-
     return Trainer, TrainingArguments, model
 
 
@@ -137,9 +134,6 @@ def _(
         processing_class=tokenizer,
         data_collator=data_collator,
     )
-
-    trainer.train()
-
     return
 
 
