@@ -31,17 +31,20 @@ def _():
 
 
 @app.cell
-def _(tokenizer):
+def _(books, tokenizer):
     def preprocess_function(examples):
         max_length = 256
         input_ids_list = []
         labels_list = []
-        for sentence, translation in zip(examples["sentence"], examples["translation"]):
+        for sentence, translation, words in zip(examples["sentence"], examples["translation"], examples["words"]):
             user_content = "Translate the following Japanese text into English.\n\n " + sentence
             messages = [{"role": "user", "content": user_content}]
+            print(messages)
+        
             prompt_ids = tokenizer.apply_chat_template(
                 messages, add_generation_prompt=True, tokenize=True, return_dict=False
             )
+            print(translation + " " + str(words))
             response_ids = tokenizer(translation, add_special_tokens=False)["input_ids"]
             response_ids = response_ids + [tokenizer.eos_token_id]
             input_ids = (prompt_ids + response_ids)[:max_length]
@@ -49,7 +52,7 @@ def _(tokenizer):
             input_ids_list.append(input_ids)
             labels_list.append(labels)
         return {"input_ids": input_ids_list, "labels": labels_list}
-
+    preprocess_function(books["train"][0:1])
 
     return (preprocess_function,)
 

@@ -1,5 +1,7 @@
 from datasets import load_dataset
 
+from main import format_sentence_card
+
 books = load_dataset("parquet", data_files="training_set.parquet")
 books = books["train"].train_test_split(test_size=0.2)
 books
@@ -14,16 +16,27 @@ tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
 
 def preprocess_function(examples):
-    max_length = 256
+    max_length = 512
     input_ids_list = []
     labels_list = []
-    for sentence, translation in zip(examples["sentence"], examples["translation"]):
-        user_content = "Translate the following Japanese text into English.\n\n " + sentence
+    for i in range(len(examples["sentence"])):
+        row = {
+            "sentence": examples["sentence"][i],
+            "sentence_kana": examples["sentence_kana"][i],
+            "translation": examples["translation"][i],
+            "words": examples["words"][i],
+        }
+        sentence = row["sentence"]
+        user_content = (
+            "Produce a Japanese learner card (reading, translation, and "
+            "essential vocabulary) for the following sentence.\n\n " + sentence
+        )
         messages = [{"role": "user", "content": user_content}]
         prompt_ids = tokenizer.apply_chat_template(
             messages, add_generation_prompt=True, tokenize=True, return_dict=False
         )
-        response_ids = tokenizer(translation, add_special_tokens=False)["input_ids"]
+        card = format_sentence_card(row)
+        response_ids = tokenizer(card, add_special_tokens=False)["input_ids"]
         response_ids = response_ids + [tokenizer.eos_token_id]
         input_ids = (prompt_ids + response_ids)[:max_length]
         labels = ([-100] * len(prompt_ids) + response_ids)[:max_length]
