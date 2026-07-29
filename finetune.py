@@ -134,6 +134,7 @@ def _(
         processing_class=tokenizer,
         data_collator=data_collator,
     )
+    trainer.train()
     return
 
 
